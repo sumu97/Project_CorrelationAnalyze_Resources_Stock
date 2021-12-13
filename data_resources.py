@@ -1,5 +1,5 @@
 """[Parameters for this file]"""
-
+"""21.12.10 정상작동 / 데이터 크롤링(investing.com) -> 데이터베이스 테이블 생성(data.db / resources) """
 start_date = "2016/12/08"
 end_date = "2021/12/08" # 2일 이전까지는 가능함
 Frequency = "Daily" # "Weekly"
@@ -81,7 +81,6 @@ formData = {
 
 POSTURL = r"https://kr.investing.com/instruments/HistoricalDataAjax"
 
-""" 3. 데이터 랭글링 """
 for (_, title), (curr_id, smlID) in zip(commodities, ids):
     formData["curr_id"] = curr_id
     formData["smlID"] = smlID
@@ -260,19 +259,20 @@ for (_, title), (curr_id, smlID) in zip(commodities, ids):
 #df4= pd.merge(uscp,ldcp,ussg,orjs,licw,pgmt,cmt,wood,giri,how='outer')
 #df = pd.merge(gold,silv,copr,plat,plad,wtio,brto,ngas,hoil,gsol,lgas,alum,ayen,napp,nikl,ston,mack,seed,corn,bean,beol,bebk,silk,coco,uscp,ldcp,ussg,orjs,licw,pgmt,cwmt,wood,giri,how='outer')
 #print(gold,silv,copr,plat,plad,wtio,brto,ngas,hoil,gsol,lgas,alum,ayen,napp,nikl,ston,mack,seed,corn,bean,beol,bebk,silk,coco,uscp,ldcp,orjs,licw)
+"""3. 데이터프레임 병합 / 결측치 보간 및 중복확인"""
 
 df = gold.join(silv,how='outer').join(copr, how='outer').join(plat, how='outer').join(plad, how='outer').join(wtio, how='outer').join(brto, how='outer').join(ngas, how='outer').join(hoil, how='outer').join(gsol, how='outer').join(lgas, how='outer').join(alum, how='outer').join(ayen, how='outer').join(napp, how='outer').join(nikl, how='outer').join(ston, how='outer').join(mack, how='outer').join(seed, how='outer').join(corn, how='outer').join(bean, how='outer').join(beol, how='outer').join(bebk, how='outer').join(silk, how='outer').join(coco, how='outer').join(uscp, how='outer').join(ldcp, how='outer').join(orjs, how='outer').join(licw, how='outer')
-print(df)
 
-df = df.interpolate()
+df = df.interpolate() # 왜 안먹지..? # Print 문이 앞에있어서 안먹은것처럼 보인 것 뿐이었고..
 
 print('\n','[Duplicated check]','\n')
 df.T.duplicated()
 
+print(df)
 # 왜 멀지가 안되는건지 멀르겠지
 # 데이터가 빠져있는데 joIN을 하니 될리가 있나..
 
-"""데이터를 SQLite DB에 저장하기"""
+"""4. 데이터를 SQLite DB에 저장하기"""
 import sqlite3
 import os
 db_path = os.getcwd() + "/data.db" # db 경로
